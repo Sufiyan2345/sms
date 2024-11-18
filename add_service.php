@@ -1,35 +1,72 @@
 <?php
 session_start();
 if(!isset($_SESSION["user"])){
-    header("Location: http://localhost/e-projectsms/admin-salon/login.php");
+    header("Location: login.php");
+    exit();
 }
 
-?>
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "eproject";
 
-<?php
-$conn = mysqli_connect("localhost", "root", "", "eproject");
+// Connect to database
+$conn = new mysqli($host, $user, $password, $database);
 
 // Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Update appointment status
-if (isset($_GET['action']) && isset($_GET['id'])) {
-    $status = $_GET['action'] == 'accept' ? 'Accepted' : 'Rejected';
-    $id = $_GET['id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the form input values
+    $service_name = $_POST['service_name'];
+    $description = $_POST['description'];
+    $price = $_POST['price'];
 
-    $updateQuery = "UPDATE client SET status='$status' WHERE a_id='$id'";
-    mysqli_query($conn, $updateQuery);
+    // Handle image upload
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
+        $fileTmpPath = $_FILES['image']['tmp_name'];
+        $fileName = $_FILES['image']['name'];
+        $fileSize = $_FILES['image']['size'];
+        $fileType = $_FILES['image']['type'];
+        $fileNameCmps = explode(".", $fileName);
+        $fileExtension = strtolower(end($fileNameCmps));
+
+        // Define allowed extensions
+        $allowedFileExtensions = array('jpg', 'jpeg', 'png', 'gif');
+        
+        if (in_array($fileExtension, $allowedFileExtensions)) {
+            // Directory to save images
+            $uploadFileDir = './uploads/';
+            $newFileName = uniqid() . '.' . $fileExtension;
+            $dest_path = $uploadFileDir . $newFileName;
+
+            // Move uploaded file to destination directory
+            if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                // Insert data into the services table
+                $sql = "INSERT INTO services (service_name, description, price, image) VALUES (?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssis", $service_name, $description, $price, $dest_path);
+
+                if ($stmt->execute()) {
+                    echo "Service added successfully!";
+                } else {
+                    echo "Error: " . $stmt->error;
+                }
+            } else {
+                echo "Error: Could not upload the file.";
+            }
+        } else {
+            echo "Error: Invalid file type. Only JPG, JPEG, PNG, and GIF allowed.";
+        }
+    } else {
+        echo "Error: No file uploaded.";
+    }
 }
 
-// Fetch all appointments
-$sql = "SELECT * FROM client";
-$result = mysqli_query($conn, $sql);
+$conn->close();
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -55,89 +92,96 @@ $result = mysqli_query($conn, $sql);
     <link rel="shortcut icon" href="assets/images/favicon.png" />
   </head>
   <style>
+  /* General styles */
 
 
-/* Header */
-
-
-/* Container */
-
-.row{
-  width: 118%;
-  height: 80%;
-  margin: 90px;
-  margin-right: 3100px;
-  margin-left: -525px;
-
-padding: 70px;
-
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    color: #333;
 }
 
-/* Table Styles */
-.table {
+.container {
+    max-width: 600px;
+    margin: 90px ;
+  margin-left: 40px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+
+label {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+input[type="file"] {
     width: 100%;
-  
- 
-   
-}
-
-.table th, .table td {
-    border: 1px solid grey; /* Border color */
-   
-    text-align: left;
-}
-
-.table th {
-    background-color: black; /* Header background color */
-    color: white:
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     font-size: 16px;
-    
 }
 
-
-
-.table tr:hover {
-    background-color:black; /* Row hover effect */
+textarea {
+    resize: vertical;
+    height: 100px;
 }
 
-/* Button Styles */
-.btn {
-    padding: 8px 12px;
+button {
+    background-color: #28a745;
+    color: white;
+    padding: 12px;
     border: none;
     border-radius: 4px;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
-.btn-primary {
-    background-color: #27ae60; /* Accept button color */
+button:hover {
+    background-color: #218838;
+}
+
+input[type="file"] {
+    padding: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    background-color: #007bff;
     color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    margin-right: 10px;
+    cursor: pointer;
 }
 
-.btn-danger {
-    background-color: #c0392b; /* Reject button color */
-    color: white;
+input[type="file"]::file-selector-button:hover {
+    background-color: #0056b3;
 }
 
-.btn-primary:hover {
-    background-color: #219150; /* Darker green on hover */
+div {
+    margin-bottom: 15px;
 }
 
-.btn-danger:hover {
-    background-color: #a93226; /* Darker red on hover */
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
 }
 
-/* Additional Styles */
-.text-success {
-    color: #2ecc71; /* Green for accepted status */
-}
-
-.text-danger {
-    color: #e74c3c; /* Red for rejected status */
-}
-
-  </style>
+</style>
   <body>
     <div class="container-scroller">
       <!-- partial:partials/_sidebar.html -->
@@ -146,8 +190,8 @@ padding: 70px;
         
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
         <h1 class="mb-0 text-primary text-uppercase text-warning"><i class="fa fa-cut me-3 "></i>SMS</h1>
-        <h5>ADMIN PANEL</h5>
-        
+        <H5>ADMIN PANEL</H5>
+          <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
         </div>
         <ul class="nav">
           <li class="nav-item profile">
@@ -165,7 +209,6 @@ padding: 70px;
                 
           </li>
       
-        
           <li class="nav-item menu-items">
             <a class="nav-link" href="index.php">
               <span class="menu-icon">
@@ -200,14 +243,13 @@ padding: 70px;
               </span>
               <span class="menu-title">Registered users </span>
              
-         
               </a>
             <li class="nav-item menu-items">
             <a class="nav-link"  href="new_barber.php">
               <span class="menu-icon">
               <span class="mdi mdi-account-multiple-plus-outline"></span>
               </span>
-              <span class="menu-title">Staff </span>
+              <span class="menu-title">Staff</span>
              
             </a>
           <li class="nav-item menu-items">
@@ -226,6 +268,8 @@ padding: 70px;
               <span class="menu-title">Products</span>
             </a>
           </li>
+          
+         
         </ul>
       </nav>
       <!-- partial -->
@@ -240,21 +284,15 @@ padding: 70px;
               <span class="mdi mdi-menu"></span>
             </button>
             <ul class="navbar-nav w-100">
+              <li class="nav-item w-100">
               
+              </li>
             </ul>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item dropdown d-none d-lg-block">
                 <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" href="add-new-user.php">+ Create New Admin</a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
-                
-             
-                 
-                   
-            
-                
-                   
-             
-             
+              
               <li class="nav-item dropdown border-left">
              
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
@@ -279,6 +317,7 @@ padding: 70px;
                       </div>
                     </div>
                     <div class="preview-item-content">
+                      
                       <p class="preview-subject mb-1">Settings</p>
                       <p class="text-muted ellipsis mb-0"> Update dashboard </p>
                     </div>
@@ -295,9 +334,7 @@ padding: 70px;
                       <p class="text-muted ellipsis mb-0"> New admin wow! </p>
                     </div>
                   </a>
-                  <div class="dropdown-divider"></div>
-                  <p class="p-3 mb-0 text-center">See all notifications</p>
-                </div>
+                  
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
@@ -323,123 +360,31 @@ padding: 70px;
           </div>
         </nav>
 
-         
-        <h2 style="color: white; margin: 80px" ><b>All/Appointments</b></h2>    
-        <div class="container-fluid d-flex justify-content-center">
-        <div class="container-scroller">
-          
-        </div>
-        <?php if(mysqli_num_rows($result) > 0): ?>
-    <div class="container-fluid text">
-        <div class="row">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>S.no</th>
-                        <th>Names</th>
-                        <th>Email</th>
-                        <th>Services</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Status</th>
-                        <th colspan="3" class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                            <td><?php echo $row['a_id']; ?></td>
-                            <td><?php echo $row['a_name']; ?></td>
-                            <td><?php echo $row['a_email']; ?></td>
-                            <td><?php echo $row['a_services']; ?></td>
-                            <td><?php echo $row['a_date']; ?></td>
-                            <td><?php echo $row['a_time']; ?></td>
-                            <td class="<?php echo $row['status'] === 'Accepted' ? 'text-success' : ($row['status'] === 'Rejected' ? 'text-danger' : ''); ?>">
-                                <?php echo $row['status']; ?>
-                            </td>
-                            <td class="text-center">
-                                <a href="?action=accept&id=<?php echo $row['a_id']; ?>" class="btn btn-primary">Accept</a>
-                            </td>
-                            <td class="text-center">
-                                <a href="?action=reject&id=<?php echo $row['a_id']; ?>" class="btn btn-danger">Reject</a>
-                            </td>
-                            <td class="text-center">
-                                <a href="?delete_id=<?php echo $row['a_id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this appointment?');">Delete</a>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-            <div class="text-center">
-                <a href="?clear_all=1" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear all appointments?');">Clear All Appointments</a>
+
+<body>
+    <div class="container">
+        <h1 style="color:white;">Add New Service</h1>
+        <form action="add_service.php" method="post" enctype="multipart/form-data">
+            <div>
+                <label for="service_name" style="color:white;">Service Name</label>
+                <input type="text" name="service_name" id="service_name" required>
             </div>
-        </div>
+            <div>
+                <label for="description" style="color:white;">Description</label>
+                <textarea name="description" id="description" required></textarea>
+            </div>
+            <div>
+                <label for="price" style="color:white;">Price</label>
+                <input type="number" name="price" id="price" required>
+            </div>
+            <div>
+                <label for="image" style="color:white;">Service Image</label>
+                <input type="file" name="image" id="image" accept="image/*" required>
+            </div>
+            <div>
+                <button type="submit" >Add Service</button>
+            </div>
+        </form>
     </div>
-<?php else: ?>
-    <p>No appointments found.</p>
-<?php endif; ?>
-
-        <?php
-$conn = mysqli_connect("localhost", "root", "", "eproject");
-
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-// Update appointment status and send email
-if (isset($_GET['action']) && isset($_GET['id'])) {
-  $status = $_GET['action'] == 'accept' ? 'Accepted' : 'Rejected';
-  $id = $_GET['id'];
-
-  $updateQuery = "UPDATE client SET status='$status' WHERE a_id='$id'";
-  if (mysqli_query($conn, $updateQuery)) {
-      // Fetch user email and appointment details to send notification
-      $query = "SELECT a_email, a_name, a_services, a_date, a_time FROM client WHERE a_id='$id'";
-      $result = mysqli_query($conn, $query);
-      $user = mysqli_fetch_assoc($result);
-
-      // Email details
-      $to = $user['a_email'];
-      $subject = "Appointment Status Update";
-      $message = "Hello " . $user['a_name'] . ",\n\n" .
-                 "Your appointment has been " . strtolower($status) . ".\n\n" .
-                 "Appointment Details:\n" .
-                 "Service: " . $user['a_services'] . "\n" .
-                 "Date: " . $user['a_date'] . "\n" .
-                 "Time: " . $user['a_time'] . "\n\n" .
-                 "Thanks For Applyツ!";
-      $headers = "From: btsr66274@gmail.com";
-
-      // Send email
-      mail($to, $subject, $message, $headers);
-  }
-}
-if (isset($_GET['delete_id'])) {
-  $deleteId = $_GET['delete_id'];
-  $deleteQuery = "DELETE FROM client WHERE a_id='$deleteId'";
-  mysqli_query($conn, $deleteQuery);
-}
-
-// Fetch all appointments
-$sql = "SELECT * FROM client";
-$result = mysqli_query($conn, $sql);
-// Clear all appointments
-if (isset($_GET['clear_all'])) {
-  $clearQuery = "DELETE FROM client";
-  if (mysqli_query($conn, $clearQuery)) {
-      echo "<script>alert('All appointments cleared successfully.');</script>";
-      // Redirect to refresh the page
-      header("Location: " . $_SERVER['PHP_SELF']);
-      exit;
-  } else {
-      echo "<script>alert('Error clearing appointments: " . mysqli_error($conn) . "');</script>";
-  }
-}
-
-?>
-    </div>
-
-    <!-- JS includes omitted for brevity -->
 </body>
 </html>

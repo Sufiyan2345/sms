@@ -14,21 +14,27 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// Update appointment status
-if (isset($_GET['action']) && isset($_GET['id'])) {
-    $status = $_GET['action'] == 'accept' ? 'Accepted' : 'Rejected';
-    $id = $_GET['id'];
+$reportData = [];
 
-    $updateQuery = "UPDATE client SET status='$status' WHERE a_id='$id'";
-    mysqli_query($conn, $updateQuery);
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['start_date']) && isset($_POST['end_date'])) {
+    $startDate = $_POST['start_date'];
+    $endDate = $_POST['end_date'];
+    $startDate = mysqli_real_escape_string($conn, $startDate);
+    $endDate = mysqli_real_escape_string($conn, $endDate);
+    
+    // Fetch detailed appointment data
+    $sql = "SELECT a_services, a_name, a_date, status
+            FROM client 
+            WHERE a_date BETWEEN '$startDate' AND '$endDate' 
+            ORDER BY a_services, a_date";
+    
+    $result = mysqli_query($conn, $sql);
+    
+    if ($result) {
+        $reportData = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
 }
-
-// Fetch all appointments
-$sql = "SELECT * FROM client";
-$result = mysqli_query($conn, $sql);
 ?>
-
-
 
 
 <!DOCTYPE html>
@@ -56,85 +62,66 @@ $result = mysqli_query($conn, $sql);
   </head>
   <style>
 
-
-/* Header */
-
-
-/* Container */
-
-.row{
-  width: 118%;
-  height: 80%;
-  margin: 90px;
-  margin-right: 3100px;
-  margin-left: -525px;
-
-padding: 70px;
-
+.container-fluid {
+    background: dark;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
 }
 
-/* Table Styles */
-.table {
-    width: 100%;
-  
- 
-   
+h2 {
+    color: white;
+    margin-bottom: 20px;
 }
 
-.table th, .table td {
-    border: 1px solid grey; /* Border color */
-   
-    text-align: left;
+form {
+    margin-bottom: 20px;
 }
 
-.table th {
-    background-color: black; /* Header background color */
-    color: white:
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-size: 16px;
-    
+input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
 }
 
-
-
-.table tr:hover {
-    background-color:black; /* Row hover effect */
-}
-
-/* Button Styles */
 .btn {
-    padding: 8px 12px;
+    color: lightgreen; /* Primary button color */
+    color: green;
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.btn-primary {
-    background-color: #27ae60; /* Accept button color */
+.btn:hover {
+    background-color: green; /* Darker shade on hover */
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.table th {
+    background-color: black; /* Header background color */
     color: white;
 }
 
-.btn-danger {
-    background-color: #c0392b; /* Reject button color */
-    color: white;
+.table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Zebra striping for rows */
 }
 
-.btn-primary:hover {
-    background-color: #219150; /* Darker green on hover */
-}
-
-.btn-danger:hover {
-    background-color: #a93226; /* Darker red on hover */
-}
-
-/* Additional Styles */
-.text-success {
-    color: #2ecc71; /* Green for accepted status */
-}
-
-.text-danger {
-    color: #e74c3c; /* Red for rejected status */
+.table tr:hover {
+    background-color: black; /* Highlight on hover */
 }
 
   </style>
@@ -146,8 +133,8 @@ padding: 70px;
         
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
         <h1 class="mb-0 text-primary text-uppercase text-warning"><i class="fa fa-cut me-3 "></i>SMS</h1>
-        <h5>ADMIN PANEL</h5>
-        
+        <H5>ADMIN PANEL</H5>
+          <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
         </div>
         <ul class="nav">
           <li class="nav-item profile">
@@ -165,7 +152,6 @@ padding: 70px;
                 
           </li>
       
-        
           <li class="nav-item menu-items">
             <a class="nav-link" href="index.php">
               <span class="menu-icon">
@@ -200,7 +186,7 @@ padding: 70px;
               </span>
               <span class="menu-title">Registered users </span>
              
-         
+            
               </a>
             <li class="nav-item menu-items">
             <a class="nav-link"  href="new_barber.php">
@@ -226,6 +212,7 @@ padding: 70px;
               <span class="menu-title">Products</span>
             </a>
           </li>
+        
         </ul>
       </nav>
       <!-- partial -->
@@ -240,21 +227,15 @@ padding: 70px;
               <span class="mdi mdi-menu"></span>
             </button>
             <ul class="navbar-nav w-100">
+              <li class="nav-item w-100">
               
+              </li>
             </ul>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item dropdown d-none d-lg-block">
                 <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" href="add-new-user.php">+ Create New Admin</a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
-                
-             
-                 
-                   
-            
-                
-                   
-             
-             
+              
               <li class="nav-item dropdown border-left">
              
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
@@ -279,6 +260,7 @@ padding: 70px;
                       </div>
                     </div>
                     <div class="preview-item-content">
+                      
                       <p class="preview-subject mb-1">Settings</p>
                       <p class="text-muted ellipsis mb-0"> Update dashboard </p>
                     </div>
@@ -295,9 +277,7 @@ padding: 70px;
                       <p class="text-muted ellipsis mb-0"> New admin wow! </p>
                     </div>
                   </a>
-                  <div class="dropdown-divider"></div>
-                  <p class="p-3 mb-0 text-center">See all notifications</p>
-                </div>
+                  
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
@@ -322,124 +302,63 @@ padding: 70px;
           
           </div>
         </nav>
+<!--navbar end-->
+<div class="container-fluid">
+        <h2 class="text-center" style="margin-top: 20px;">Date-wise Sales Report for Appointments</h2>
+        
+        <form method="POST" class="text-center" style="margin-bottom: 20px;">
+            Start ➡<input type="date" name="start_date" required>
+            End ➡ <input type="date" name="end_date" required>
+            <button type="submit" class="btn btn-success">Show Report</button>
+        </form>
 
-         
-        <h2 style="color: white; margin: 80px" ><b>All/Appointments</b></h2>    
-        <div class="container-fluid d-flex justify-content-center">
-        <div class="container-scroller">
-          
-        </div>
-        <?php if(mysqli_num_rows($result) > 0): ?>
-    <div class="container-fluid text">
         <div class="row">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>S.no</th>
-                        <th>Names</th>
-                        <th>Email</th>
-                        <th>Services</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Status</th>
-                        <th colspan="3" class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                            <td><?php echo $row['a_id']; ?></td>
-                            <td><?php echo $row['a_name']; ?></td>
-                            <td><?php echo $row['a_email']; ?></td>
-                            <td><?php echo $row['a_services']; ?></td>
-                            <td><?php echo $row['a_date']; ?></td>
-                            <td><?php echo $row['a_time']; ?></td>
-                            <td class="<?php echo $row['status'] === 'Accepted' ? 'text-success' : ($row['status'] === 'Rejected' ? 'text-danger' : ''); ?>">
-                                <?php echo $row['status']; ?>
-                            </td>
-                            <td class="text-center">
-                                <a href="?action=accept&id=<?php echo $row['a_id']; ?>" class="btn btn-primary">Accept</a>
-                            </td>
-                            <td class="text-center">
-                                <a href="?action=reject&id=<?php echo $row['a_id']; ?>" class="btn btn-danger">Reject</a>
-                            </td>
-                            <td class="text-center">
-                                <a href="?delete_id=<?php echo $row['a_id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this appointment?');">Delete</a>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-            <div class="text-center">
-                <a href="?clear_all=1" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear all appointments?');">Clear All Appointments</a>
+            <div class="col-md-12">
+                <?php if (!empty($reportData)): ?>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Client Name</th>
+                                <th>Appointment Date</th>
+                                <th>Status</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($reportData as $row): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['a_services']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['a_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['a_date']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['status']); ?></td>
+                                    
+    </a>
+                                </tr>
+                                
+                               
+                            <?php endforeach; ?>
+                            
+                        </tbody>
+                        
+                    </table>
+                <?php else: ?>
+                    <p>No sales data found for the selected date.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
-<?php else: ?>
-    <p>No appointments found.</p>
-<?php endif; ?>
 
-        <?php
-$conn = mysqli_connect("localhost", "root", "", "eproject");
 
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-// Update appointment status and send email
-if (isset($_GET['action']) && isset($_GET['id'])) {
-  $status = $_GET['action'] == 'accept' ? 'Accepted' : 'Rejected';
-  $id = $_GET['id'];
-
-  $updateQuery = "UPDATE client SET status='$status' WHERE a_id='$id'";
-  if (mysqli_query($conn, $updateQuery)) {
-      // Fetch user email and appointment details to send notification
-      $query = "SELECT a_email, a_name, a_services, a_date, a_time FROM client WHERE a_id='$id'";
-      $result = mysqli_query($conn, $query);
-      $user = mysqli_fetch_assoc($result);
-
-      // Email details
-      $to = $user['a_email'];
-      $subject = "Appointment Status Update";
-      $message = "Hello " . $user['a_name'] . ",\n\n" .
-                 "Your appointment has been " . strtolower($status) . ".\n\n" .
-                 "Appointment Details:\n" .
-                 "Service: " . $user['a_services'] . "\n" .
-                 "Date: " . $user['a_date'] . "\n" .
-                 "Time: " . $user['a_time'] . "\n\n" .
-                 "Thanks For Applyツ!";
-      $headers = "From: btsr66274@gmail.com";
-
-      // Send email
-      mail($to, $subject, $message, $headers);
-  }
-}
-if (isset($_GET['delete_id'])) {
-  $deleteId = $_GET['delete_id'];
-  $deleteQuery = "DELETE FROM client WHERE a_id='$deleteId'";
-  mysqli_query($conn, $deleteQuery);
-}
-
-// Fetch all appointments
-$sql = "SELECT * FROM client";
-$result = mysqli_query($conn, $sql);
-// Clear all appointments
-if (isset($_GET['clear_all'])) {
-  $clearQuery = "DELETE FROM client";
-  if (mysqli_query($conn, $clearQuery)) {
-      echo "<script>alert('All appointments cleared successfully.');</script>";
-      // Redirect to refresh the page
-      header("Location: " . $_SERVER['PHP_SELF']);
-      exit;
-  } else {
-      echo "<script>alert('Error clearing appointments: " . mysqli_error($conn) . "');</script>";
-  }
-}
-
-?>
-    </div>
-
-    <!-- JS includes omitted for brevity -->
+    <!-- Include JS libraries -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/misc.js"></script>
+    <script src="assets/js/dashboard.js"></script>
 </body>
 </html>
+
+<?php
+mysqli_close($conn);
+?>

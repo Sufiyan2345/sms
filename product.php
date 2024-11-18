@@ -1,225 +1,356 @@
 <?php
 session_start();
 if(!isset($_SESSION["user"])){
-    header("Location: http://localhost/e-projectsms/login.php");
+    header("Location: http://localhost/e-projectsms/admin-salon/login.php");
 }
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
+    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <title>SALON MANAGEMENT SYSTEM</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title> Admin -SMS</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="assets/vendors/jvectormap/jquery-jvectormap.css">
+    <link rel="stylesheet" href="assets/vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.carousel.min.css">
+    <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.theme.default.min.css">
+    <!-- End plugin css for this page -->
 
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="assets/images/favicon.png" />
+  </head>
 
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Oswald:wght@600&display=swap" rel="stylesheet">
-
-    <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
-</head>
-
-<body>
-    <!-- Spinner Start -->
-   
-    <!-- Spinner End -->
-
-
-    <!-- Navbar Start -->
-    <nav class="navbar navbar-expand-lg bg-dark navbar-light sticky-top py-lg-0 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
-        <a href="home.php" class="navbar-brand ms-4 ms-lg-0 ">
-            <h1 class="mb-0 text-primary text-uppercase text-warning"><i class="fa fa-cut me-3 "></i>SMS</h1>
-            <H5>SALON MANAGEMENT SYSTEM</H5>
-            <!-- <img src="C:\Users\asp\Downloads\Black and White Modern Illustrative Barbershop Logo (2)-Photoroom.png" width="200px" height="200px"> -->
-        </a>
-        <button type="button" class="navbar-toggler me-4 " data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon bg-white"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto p-4 p-lg-0">
-            <a href="home.php" class="nav-item nav-link active">Home</a>
-                <a href="about.php" class="nav-item nav-link">About</a>
-             
-                <a href="cart.php" class="nav-item nav-link" > Services</a>
-                <a href="product.php" class="nav-item nav-link" > Products</a>
-                <a href="contact.php" class="nav-item nav-link">Contact</a>
-            </div>
-            <a href="appointment.php" class="btn btn-danger rounded-0 py-2 px-lg-4 d-none d-lg-block">Appointment<i class="fa fa-arrow-right ms-3"></i></a>
-            <a href="logout.php">
-         <button type="submit" class="btn btn-warning rounded-0 py-2 px-lg-4 d-none d-lg-block" name="logout">Logout</button>
-          </a>
+  <body>
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.html -->
+       
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        
+        <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+        <h1 class="mb-0 text-primary text-uppercase text-warning"><i class="fa fa-cut me-3 "></i>SMS</h1>
+        <H5>ADMIN PANEL</H5>
+          <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
         </div>
-    </nav>
-    <!-- Navbar End -->
+        <ul class="nav">
+          <li class="nav-item profile">
+            <div class="profile-desc">
+              <div class="profile-pic">
+                <div class="count-indicator">
+               
+                  
+                </div>
+         
+                
+                </div>
+              </div>
+          
+                
+          </li>
       
-        </head>
-        <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Best<b>Product</b></h2>
-                    <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="0">
-                    <!-- Carousel indicators -->
-                    <ol class="carousel-indicators">
-                        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                        <li data-target="#myCarousel" data-slide-to="1"></li>
-                        <li data-target="#myCarousel" data-slide-to="2"></li>
-                    </ol>   
-                    <!-- Wrapper for carousel items -->
-                    <div class="carousel-inner">
-                        <div class="item active">
-                            <div class="row">
-                            <?php
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "eproject";
+          
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="index.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-view-dashboard"></span>
 
-$conn=mysqli_connect("localhost","root","","eproject") or die("Failed");
+              </span>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="services.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-tune"></span>
 
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-// Fetch products from the database
-$sql = "SELECT * FROM products";
-$result = mysqli_query($conn, $sql);
-
-// Check if products exist
-if (mysqli_num_rows($result) > 0) {
-    // Loop through the products
-    while ($row = mysqli_fetch_assoc($result)) {
-?>
-        <div class="col-sm-3">
-            <div class="thumb-wrapper">
-                <div class="img-box">
-                    <img src="img/<?php echo $row['image']; ?>" class="img-responsive" alt="<?php echo $row['name']; ?>">
-                </div>
-                <div class="thumb-content">
-                    <h5 style="color:gold;"><?php echo $row['name']; ?></h5>
-                    <h4><?php echo $row['description']; ?></h4>
-                    <div class="star-rating">
-                        <ul class="list-inline">
-                            <?php
-                            // Display star rating based on the product's rating
-                            $rating = $row['rating'];
-                            for ($i = 1; $i <= 5; $i++) {
-                                if ($i <= floor($rating)) {
-                                    echo '<li class="list-inline-item"><i class="fa fa-star"></i></li>';
-                                } elseif ($i == ceil($rating)) {
-                                    echo '<li class="list-inline-item"><i class="fa fa-star-half-o"></i></li>';
-                                } else {
-                                    echo '<li class="list-inline-item"><i class="fa fa-star-o"></i></li>';
-                                }
-                            }
-                            ?>
-                        </ul>
-                    </div>
-                    <h4>$<?php echo $row['price']; ?></h4>
-                    <a href="cart.php?add_to_cart=<?php echo $row['id']; ?>" ></a>
-                </div>						
-            </div>
-        </div>
-<?php
-    }
-} else {
-    echo "No products found!";
-}
-?>
-
-                </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer Start -->
-        <div class="container-fluid bg-secondary text-light footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container py-5">
-                <div class="row g-5">
-                    <div class="col-lg-4 col-md-6">
-                        <h4 class="text-uppercase mb-4">Get In Touch</h4>
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="btn-square bg-dark flex-shrink-0 me-3">
-                                <span class="fa fa-map-marker-alt text-warning"></span>
-                            </div>
-                            <span>123 Street,Islamabad, PAK</span>
-                        </div>
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="btn-square bg-dark flex-shrink-0 me-3">
-                                <span class="fa fa-phone-alt text-warning"></span>
-                            </div>
-                            <span>+(92) 345 6879076</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="btn-square bg-dark flex-shrink-0 me-3">
-                                <span class="fa fa-envelope-open text-warning"></span>
-                            </div>
-                            <span>barbershop@gmail.com</span>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                    <h4 class="text-uppercase mb-4">Quick Links</h4>
-                    <a class="btn btn-link" href="about.php">About Us</a>
-                    <a class="btn btn-link" href="contact.php">Contact Us</a>
-                    <a class="btn btn-link" href="cart.php">Our Services</a>
-                    <a class="btn btn-link" href="feedback.php">Give Feedback</a>
-
-                    <a class="btn btn-link" href="appointment.php.php">Book now</a>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <h4 class="text-uppercase mb-4">Newsletter</h4>
-                        <div class="position-relative mb-4">
-                            <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
-                        </div>
-                        <div class="d-flex pt-1 m-n1">
-                            <a class="btn btn-lg-square btn-dark text-warning m-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-lg-square btn-dark text-warning m-1" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-lg-square btn-dark text-warning m-1" href=""><i class="fab fa-youtube"></i></a>
-                            <a class="btn btn-lg-square btn-dark text-warning m-1" href=""><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+              </span>
+              <span class="menu-title">Services</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="appointment.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-calendar-check-outline"></span>
+              </span>
+              <span class="menu-title">Appointment</span>
+            </a>
+          </li>
+          
+          <li class="nav-item menu-items">
+            <a class="nav-link"  href="register.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-account-plus-outline"></span>
+              </span>
+              <span class="menu-title">Registered users </span>
            
-        <!-- Footer End -->
-    
-    
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-muted btn-lg-square back-to-top" style="background-color: #191C24;"><i class="bi bi-arrow-up"></i></a>
-    
-    
-        <!-- JavaScript Libraries -->
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="lib/wow/wow.min.js"></script>
-        <script src="lib/easing/easing.min.js"></script>
-        <script src="lib/waypoints/waypoints.min.js"></script>
-        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    
-        <!-- Template Javascript -->
-        <script src="js/main.js"></script>
-</body>
+              </a>
+            <li class="nav-item menu-items">
+            <a class="nav-link"  href="new_barber.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-account-multiple-plus-outline"></span>
+              </span>
+              <span class="menu-title">Staff </span>
+             
+            </a>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="sales_report.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-chart-bar"></span>
+              </span>
+              <span class="menu-title">Sales Report</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="product.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-cart-arrow-up"></span>
+              </span>
+              <span class="menu-title">Products</span>
+            </a>
+          </li>
+         
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_navbar.html -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+          <h1 class="mb-0 text-primary text-uppercase text-warning"><i class="fa fa-cut me-3 "></i>SMS</h1>
+        <H5>ADMIN PANEL</H5>          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+              <span class="mdi mdi-menu"></span>
+            </button>
+            <ul class="navbar-nav w-100">
+              <li class="nav-item w-100">
+                
+              </li>
+            </ul>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown d-none d-lg-block">
+              <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" href="add-new-user.php">+ Create New Admin</a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
+                
+             
+                 
+                   
+            
+                
+                   
+             
+             
+              <li class="nav-item dropdown border-left">
+             
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                 
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-calendar text-success"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Event today</p>
+                      <p class="text-muted ellipsis mb-0"> Just a reminder that you have an event today </p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-settings text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Settings</p>
+                      <p class="text-muted ellipsis mb-0"> Update dashboard </p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-link-variant text-warning"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Launch Admin</p>
+                      <p class="text-muted ellipsis mb-0"> New admin wow! </p>
+                    </div>
+                  </a>
+            
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
+                  <div class="navbar-profile">
+                  <img class="img-xs rounded-circle" src="https://png.pngtree.com/template/20190529/ourmid/pngtree-retro-round-and-simple-barber-shop-logo-image_204760.jpg" alt="">
+                  <p class="mb-0 d-none d-sm-block navbar-profile-name">Admin</p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                  </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
+                
+                          
+                <a href="edit.data.php">
+         <button type="submit" class="btn btn-dark rounded-0 py-2 px-lg-4 d-none d-lg-block" name="logout">view profile</button>
+          </a>
+            
+                  <a href="logout.php">
+         <button type="submit" class="btn btn-dark rounded-0 py-2 px-lg-4 d-none d-lg-block" name="logout">Logout/</button>
+          </a>
+                 
+              </li>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+          </div>
+        </nav>
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-12 grid-margin stretch-card">
+                <div class="card corona-gradient-card">
+                  <div class="card-body py-0 px-0 px-sm-3">
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                
+               <div class="container">
+                
+               </div>
+                
+               
+              </div>
+            </div>
+
+            <div class="container d-flex justify-content-end">
+         
+            </div>
+            <div class="container-fluid text-left">
+           
+              <h1>Products Information</h1>
+              <a href="add_product.php" class="btn btn-primary">+Add Product</a>
+              <!-- <a href="add_service.php" class="btn btn-primary">+Add Services</a> -->
+            </div>
+          <?php
+          $conn = mysqli_connect("localhost","root","","eproject");
+          $sql = "SELECT * FROM  products ";
+          $result = mysqli_query($conn,$sql);
+          if(mysqli_num_rows($result)){
+          
+          
+          ?>
+            <br>
+            <div class="container-fluid">
+            <div class="row">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                   
+                    <th scope="col">id</th>
+                    <th scope="col">name</th>
+                    <th scope="col">description</th>
+                    <th scope="col">price</th>
+                    <th scope="col">image</th>
+                    <th scope="col">rating</th>
+
+
+                   
+                   
+                    <th colspan="2" class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <?php
+                while($row=mysqli_fetch_assoc($result)){
+                
+                ?> 
+                
+                <tr>
+                 
+                    <td><?php echo $row['id'];?></td>
+                    <td><?php echo $row['name'];?></td>
+                    <td><?php echo $row['description'];?></td>
+                    <td><?php echo $row['price'];?></td>
+                    <td><?php echo $row['image'];?></td>
+                    <td><?php echo $row['rating'];?></td>
+                    
+                    <td>
+  <a href="edit_product.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">Edit</a>
+</td>
+<td>
+  <a href="delete_product.php?id=<?php echo $row['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+</td>
+
+
+                  </tr>
+                  <?php
+          }
+          
+          ?>
+             
+                </tbody>
+              </table>
+          <?php
+          }
+          
+          ?>
+             </div>
+            
+           
+           
+
+            
+           
+           
+             
+            
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+         
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="assets/vendors/chart.js/Chart.min.js"></script>
+    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
+    <script src="assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
+    <script src="assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="assets/vendors/owl-carousel-2/owl.carousel.min.js"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/misc.js"></script>
+    <script src="assets/js/settings.js"></script>
+    <script src="assets/js/todolist.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="assets/js/dashboard.js"></script>
+    <!-- End custom js for this page -->
+  </body>
 </html>

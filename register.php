@@ -1,165 +1,346 @@
 <?php
 session_start();
-if(isset($_SESSION["user"])){
-    header("Location: http://localhost/e-projectsms/home.php");
+if(!isset($_SESSION["user"])){
+    header("Location: http://localhost/e-projectsms/admin-salon/login.php");
 }
 
 ?>
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Title</title>
-        <!-- Required meta tags -->
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title> Admin -SMS</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="assets/vendors/jvectormap/jquery-jvectormap.css">
+    <link rel="stylesheet" href="assets/vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.carousel.min.css">
+    <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.theme.default.min.css">
+    <!-- End plugin css for this page -->
 
-        <!-- Bootstrap CSS v5.2.1 -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"/>
-    </head>
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="assets/images/favicon.png" />
+  </head>
 
-    <style>
-body{
-    background-image:url(https://img.freepik.com/premium-photo/tools-barbershop-black-background-studio-shot_93675-164621.jpg) ;
-    background-position: fixed;
-    background-size: cover;
-    
-}
-</style>
-    <body>
-        <header>
-            <!-- place navbar here -->
-        </header>
-        <main>
-
-        <div class="container py-5" >
-<div class="row">
-<div class="col-lg-6 mx-auto border shadow p-4" style="color:white; font-family: monospace;">
-    <h2 class="text-center mb-4" >Register</h2>
-    <hr/>
-
-<?php
-if(isset($_POST['save'])){
-$fullname = $_POST['fname'];
-$email = $_POST['email'];
-$password = $_POST['password'];
-$cpassword = $_POST['cpassword'];
-
-$passwordhash = password_hash($password, PASSWORD_DEFAULT);
-
-$error = array();
-if(empty($fullname) OR empty($email) OR empty($password) OR empty($cpassword)){
-    array_push($error, "All fields are required");
-}
-if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-    array_push($error, "Email is not valid");
-}
-
-if(strlen($password) < 8 ){
-    array_push($error, "password needs to be 8 characters long");
-}
-
-if(($password!==$cpassword)){
-    array_push($error, "password does not match ");
-}
-
-//to check if the email exists already or not
-require_once "config.php";
-$sql = "SELECT * FROM users WHERE email = '$email'";
-$result = mysqli_query($conn,$sql);
-$rowCount = mysqli_num_rows($result);
-if($rowCount > 0){
-    array_push($error, "Email already exist!");
-} 
-if(count($error) > 0 ){
-    foreach($error as $error){
-        echo "<div class='alert alert-danger'>$error</div>";
-    } 
-}else{ 
-   $sql = "INSERT into users(fullname,email,password) VALUES (?,?,?)";
-   $stmt =  mysqli_stmt_init($conn);
-   $prepareStmt = mysqli_stmt_prepare($stmt,$sql);
-   if($prepareStmt){
-    mysqli_stmt_bind_param($stmt,"sss",$fullname,$email,$passwordhash); //if you want to add hidden password to db use $passwordhash instead of $password
-    mysqli_stmt_execute($stmt);
-    echo "<div class='alert alert-success'>You are registered successfully.</div>";
-   }else{
-    die("something went wrong");
-   }
-}
-}
-?>
-
-
-
-
-
-    <form action="register.php" method="post">
-    <div class="row mb-3">
-        <label class="col-sm-4 col-form-label" style="color:white;">Full Name*</label>
-        <div class="col-sm-8">
-            <input type="text" name="fname" class="form-control" placeholder="First Name" value="">
-            <span class="text-danger"></span>
-        </div>
-    </div>
- 
-    <div class="row mb-3">
-        <label class="col-sm-4 col-form-label" style="color:white;">Email*</label>
-        <div class="col-sm-8">
-            <input type="text" name="email" class="form-control" placeholder="Email" value="">
-            <span class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <label class="col-sm-4 col-form-label"style="color:white;">Password*</label>
-        <div class="col-sm-8">
-            <input type="password" name="password" class="form-control" placeholder="password" value="">
-            <span class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <label class="col-sm-4 col-form-label"style="color:white;">Confirm Password*</label>
-        <div class="col-sm-8">
-            <input type="password" name="cpassword" class="form-control" placeholder="Confirm password" value="">
-            <span class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <div class="offset-sm-4 col-sm-4 d-grid">
-         <button type="submit" class="btn btn-warning" name="save">Register</button>
-        </div>
+  <body>
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.html -->
        
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        
+        <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+        <h1 class="mb-0 text-primary text-uppercase text-warning"><i class="fa fa-cut me-3 "></i>SMS</h1>
+        <H5>ADMIN PANEL</H5>
+          <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
+        </div>
+        <ul class="nav">
+          <li class="nav-item profile">
+            <div class="profile-desc">
+              <div class="profile-pic">
+                <div class="count-indicator">
+               
+                  
+                </div>
+         
+                
+                </div>
+              </div>
+          
+                
+          </li>
+      
+          
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="index.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-view-dashboard"></span>
 
+              </span>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="services.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-tune"></span>
+
+              </span>
+              <span class="menu-title">Services</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="appointment.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-calendar-check-outline"></span>
+              </span>
+              <span class="menu-title">Appointment</span>
+            </a>
+          </li>
+          
+          <li class="nav-item menu-items">
+            <a class="nav-link"  href="register.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-account-plus-outline"></span>
+              </span>
+              <span class="menu-title">Registered users </span>
+           
+              </a>
+            <li class="nav-item menu-items">
+            <a class="nav-link"  href="new_barber.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-account-multiple-plus-outline"></span>
+              </span>
+              <span class="menu-title">Staff </span>
+             
+            </a>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="sales_report.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-chart-bar"></span>
+              </span>
+              <span class="menu-title">Sales Report</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="product.php">
+              <span class="menu-icon">
+              <span class="mdi mdi-cart-arrow-up"></span>
+              </span>
+              <span class="menu-title">Products</span>
+            </a>
+          </li>
+         
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_navbar.html -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+          <h1 class="mb-0 text-primary text-uppercase text-warning"><i class="fa fa-cut me-3 "></i>SMS</h1>
+        <H5>ADMIN PANEL</H5>          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+              <span class="mdi mdi-menu"></span>
+            </button>
+            <ul class="navbar-nav w-100">
+              <li class="nav-item w-100">
+                
+              </li>
+            </ul>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown d-none d-lg-block">
+              <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" href="add-new-user.php">+ Create New Admin</a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
+                
+             
+                 
+                   
+            
+                
+                   
+             
+             
+              <li class="nav-item dropdown border-left">
+             
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                 
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-calendar text-success"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Event today</p>
+                      <p class="text-muted ellipsis mb-0"> Just a reminder that you have an event today </p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-settings text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Settings</p>
+                      <p class="text-muted ellipsis mb-0"> Update dashboard </p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-link-variant text-warning"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Launch Admin</p>
+                      <p class="text-muted ellipsis mb-0"> New admin wow! </p>
+                    </div>
+                  </a>
+            
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
+                  <div class="navbar-profile">
+                  <img class="img-xs rounded-circle" src="https://png.pngtree.com/template/20190529/ourmid/pngtree-retro-round-and-simple-barber-shop-logo-image_204760.jpg" alt="">
+                  <p class="mb-0 d-none d-sm-block navbar-profile-name">Admin</p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                  </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
+                
+                          
+                <a href="edit.data.php">
+         <button type="submit" class="btn btn-dark rounded-0 py-2 px-lg-4 d-none d-lg-block" name="logout">view profile</button>
+          </a>
+            
+                  <a href="logout.php">
+         <button type="submit" class="btn btn-dark rounded-0 py-2 px-lg-4 d-none d-lg-block" name="logout">Logout/</button>
+          </a>
+                 
+              </li>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+          </div>
+        </nav>
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-12 grid-margin stretch-card">
+                <div class="card corona-gradient-card">
+                  <div class="card-body py-0 px-0 px-sm-3">
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                
+               <div class="container">
+                
+               </div>
+                
+               
+              </div>
+            </div>
+
+            <div class="container d-flex justify-content-end">
+         
+            </div>
+            <div class="container-fluid text-left">
+           
+              <h1>Admin/User Data</h1>
+              <a href="add-new-user.php" class="btn btn-primary">+Add User</a>
+              <!-- <a href="add_service.php" class="btn btn-primary">+Add Services</a> -->
+            </div>
+          <?php
+          $conn = mysqli_connect("localhost","root","","eproject");
+          $sql = "SELECT * FROM users ";
+          $result = mysqli_query($conn,$sql);
+          if(mysqli_num_rows($result)){
+          
+          
+          ?>
+            <br>
+            <div class="container-fluid">
+            <div class="row">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                   
+                    <th scope="col">id</th>
+                    <th scope="col">fullname</th>
+                    <th scope="col">email</th>
+                    <th scope="col">password</th>
+                   
+                   
+                    <th colspan="2" class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <?php
+                while($row=mysqli_fetch_assoc($result)){
+                
+                ?> 
+                
+                <tr>
+                 
+                    <td><?php echo $row['id'];?></td>
+                    <td><?php echo $row['fullname'];?></td>
+                    <td><?php echo $row['email'];?></td>
+                    <td><?php echo $row['password'];?></td>
+                    
+                  
+<td class="text-center"><a href="edit.data.php?id=<?php echo $row['id']; ?>" class="btn btn-primary"> <i class="mdi mdi-pencil"></i>Edit</a></td>
+<td class="text-center"><a href="delete.data.php?id=<?php echo $row['id']; ?>" class="btn btn-danger"> <i class="mdi mdi-delete"></i>Delete</a></td>
+
+                  </tr>
+                  <?php
+          }
+          
+          ?>
+             
+                </tbody>
+              </table>
+          <?php
+          }
+          
+          ?>
+             </div>
+            
+           
+           
+
+            
+           
+           
+             
+            
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+         
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
     </div>
-    </form>
-    <div><p>Already Registered ? <a href="login.php"> Login here</a></p></div>
-</div>
-
-</div>
-</div>
-
-
-
-
-
-        </main>
-        <footer>
-            <!-- place footer here -->
-        </footer>
-        <!-- Bootstrap JavaScript Libraries -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-            crossorigin="anonymous"
-        ></script>
-
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-            crossorigin="anonymous"
-        ></script>
-    </body>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="assets/vendors/chart.js/Chart.min.js"></script>
+    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
+    <script src="assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
+    <script src="assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="assets/vendors/owl-carousel-2/owl.carousel.min.js"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/misc.js"></script>
+    <script src="assets/js/settings.js"></script>
+    <script src="assets/js/todolist.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="assets/js/dashboard.js"></script>
+    <!-- End custom js for this page -->
+  </body>
 </html>

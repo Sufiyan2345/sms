@@ -6,31 +6,6 @@ if(!isset($_SESSION["user"])){
 
 ?>
 
-<?php
-$conn = mysqli_connect("localhost", "root", "", "eproject");
-
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-// Update appointment status
-if (isset($_GET['action']) && isset($_GET['id'])) {
-    $status = $_GET['action'] == 'accept' ? 'Accepted' : 'Rejected';
-    $id = $_GET['id'];
-
-    $updateQuery = "UPDATE client SET status='$status' WHERE a_id='$id'";
-    mysqli_query($conn, $updateQuery);
-}
-
-// Fetch all appointments
-$sql = "SELECT * FROM client";
-$result = mysqli_query($conn, $sql);
-?>
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -54,90 +29,7 @@ $result = mysqli_query($conn, $sql);
     <!-- End layout styles -->
     <link rel="shortcut icon" href="assets/images/favicon.png" />
   </head>
-  <style>
 
-
-/* Header */
-
-
-/* Container */
-
-.row{
-  width: 118%;
-  height: 80%;
-  margin: 90px;
-  margin-right: 3100px;
-  margin-left: -525px;
-
-padding: 70px;
-
-}
-
-/* Table Styles */
-.table {
-    width: 100%;
-  
- 
-   
-}
-
-.table th, .table td {
-    border: 1px solid grey; /* Border color */
-   
-    text-align: left;
-}
-
-.table th {
-    background-color: black; /* Header background color */
-    color: white:
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-size: 16px;
-    
-}
-
-
-
-.table tr:hover {
-    background-color:black; /* Row hover effect */
-}
-
-/* Button Styles */
-.btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.btn-primary {
-    background-color: #27ae60; /* Accept button color */
-    color: white;
-}
-
-.btn-danger {
-    background-color: #c0392b; /* Reject button color */
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #219150; /* Darker green on hover */
-}
-
-.btn-danger:hover {
-    background-color: #a93226; /* Darker red on hover */
-}
-
-/* Additional Styles */
-.text-success {
-    color: #2ecc71; /* Green for accepted status */
-}
-
-.text-danger {
-    color: #e74c3c; /* Red for rejected status */
-}
-
-  </style>
   <body>
     <div class="container-scroller">
       <!-- partial:partials/_sidebar.html -->
@@ -146,8 +38,8 @@ padding: 70px;
         
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
         <h1 class="mb-0 text-primary text-uppercase text-warning"><i class="fa fa-cut me-3 "></i>SMS</h1>
-        <h5>ADMIN PANEL</h5>
-        
+        <H5>ADMIN PANEL</H5>
+          <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
         </div>
         <ul class="nav">
           <li class="nav-item profile">
@@ -200,7 +92,7 @@ padding: 70px;
               </span>
               <span class="menu-title">Registered users </span>
              
-         
+             
               </a>
             <li class="nav-item menu-items">
             <a class="nav-link"  href="new_barber.php">
@@ -240,11 +132,13 @@ padding: 70px;
               <span class="mdi mdi-menu"></span>
             </button>
             <ul class="navbar-nav w-100">
-              
+              <li class="nav-item w-100">
+               
+              </li>
             </ul>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item dropdown d-none d-lg-block">
-                <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" href="add-new-user.php">+ Create New Admin</a>
+                <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" data-toggle="dropdown" aria-expanded="false" href="add-new-user.php">+ Create New Admin</a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
                 
              
@@ -295,151 +189,169 @@ padding: 70px;
                       <p class="text-muted ellipsis mb-0"> New admin wow! </p>
                     </div>
                   </a>
-                  <div class="dropdown-divider"></div>
-                  <p class="p-3 mb-0 text-center">See all notifications</p>
-                </div>
+            
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
                   <div class="navbar-profile">
-                    <img class="img-xs rounded-circle" src="https://png.pngtree.com/template/20190529/ourmid/pngtree-retro-round-and-simple-barber-shop-logo-image_204760.jpg" alt="">
-                    <p class="mb-0 d-none d-sm-block navbar-profile-name">Admin</p>
+                  <img class="img-xs rounded-circle" src="https://png.pngtree.com/template/20190529/ourmid/pngtree-retro-round-and-simple-barber-shop-logo-image_204760.jpg" alt="">
+                  <p class="mb-0 d-none d-sm-block navbar-profile-name">Admin</p>
                     <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                   </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
                 
-                    
-                <a href="register.php">
+                          
+                <a href="edit.data.php">
          <button type="submit" class="btn btn-dark rounded-0 py-2 px-lg-4 d-none d-lg-block" name="logout">view profile</button>
           </a>
             
                   <a href="logout.php">
          <button type="submit" class="btn btn-dark rounded-0 py-2 px-lg-4 d-none d-lg-block" name="logout">Logout/</button>
           </a>
+                 
               </li>
             </ul>
-          
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
           </div>
         </nav>
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-12 grid-margin stretch-card">
+                <div class="card corona-gradient-card">
+                  <div class="card-body py-0 px-0 px-sm-3">
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                
+               <div class="container">
+                
+               </div>
+                
+               
+              </div>
+            </div>
 
+            <div class="container d-flex justify-content-end">
          
-        <h2 style="color: white; margin: 80px" ><b>All/Appointments</b></h2>    
-        <div class="container-fluid d-flex justify-content-center">
-        <div class="container-scroller">
+            </div>
+            <div class="container-fluid text-left">
+           
+              <h1>Staff Data</h1>
+              <a href="add-new-barber.php" class="btn btn-primary"><span class="mdi mdi-plus"></span>+Add New Staff</a>
+              <!-- <a href="add_service.php" class="btn btn-primary">+Add Services</a> -->
+            </div>
+          <?php
+          $conn = mysqli_connect("localhost","root","","eproject");
+          $sql = "SELECT * FROM team ";
+          $result = mysqli_query($conn,$sql);
+          if(mysqli_num_rows($result)){
           
-        </div>
-        <?php if(mysqli_num_rows($result) > 0): ?>
-    <div class="container-fluid text">
-        <div class="row">
-            <table class="table table-bordered">
+          
+          ?>
+            <br>
+            <div class="container-fluid">
+            <div class="row">
+              <table class="table table-bordered">
                 <thead>
-                    <tr>
-                        <th>S.no</th>
-                        <th>Names</th>
-                        <th>Email</th>
-                        <th>Services</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Status</th>
-                        <th colspan="3" class="text-center">Actions</th>
-                    </tr>
+                  <tr>
+                   
+                    <th scope="col">id</th>
+                    <th scope="col">name</th>
+                    <th scope="col">designation</th>
+                    <th scope="col">image_path</th>
+                  
+                   
+                   
+                    <th colspan="2" class="text-center">Actions</th>
+                  </tr>
                 </thead>
                 <tbody>
-                    <?php while($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                            <td><?php echo $row['a_id']; ?></td>
-                            <td><?php echo $row['a_name']; ?></td>
-                            <td><?php echo $row['a_email']; ?></td>
-                            <td><?php echo $row['a_services']; ?></td>
-                            <td><?php echo $row['a_date']; ?></td>
-                            <td><?php echo $row['a_time']; ?></td>
-                            <td class="<?php echo $row['status'] === 'Accepted' ? 'text-success' : ($row['status'] === 'Rejected' ? 'text-danger' : ''); ?>">
-                                <?php echo $row['status']; ?>
-                            </td>
-                            <td class="text-center">
-                                <a href="?action=accept&id=<?php echo $row['a_id']; ?>" class="btn btn-primary">Accept</a>
-                            </td>
-                            <td class="text-center">
-                                <a href="?action=reject&id=<?php echo $row['a_id']; ?>" class="btn btn-danger">Reject</a>
-                            </td>
-                            <td class="text-center">
-                                <a href="?delete_id=<?php echo $row['a_id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this appointment?');">Delete</a>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
+                <?php
+                while($row=mysqli_fetch_assoc($result)){
+                
+                ?> 
+                
+                <tr>
+                 
+                    <td><?php echo $row['id'];?></td>
+                    <td><?php echo $row['name'];?></td>
+                    <td><?php echo $row['designation'];?></td>
+                    <td><?php echo $row['image_path'];?></td>
+                 
+                    
+                  
+                    <td class="text-center">
+        <a href="edit_team_member.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">
+            <i class="mdi mdi-pencil"></i> Edit
+        </a>
+    </td>
+
+    <!-- Delete Button -->
+    <td class="text-center">
+        <a href="delete_team_member.php?id=<?php echo $row['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this member?');">
+            <i class="mdi mdi-delete"></i> Delete
+        </a>
+    </td>
+</tr>
+                  <?php
+          }
+          
+          ?>
+             
                 </tbody>
-            </table>
-            <div class="text-center">
-                <a href="?clear_all=1" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear all appointments?');">Clear All Appointments</a>
-            </div>
+              </table>
+          <?php
+          }
+          
+          ?>
+             </div>
+            
+           
+           
+
+            
+           
+           
+             
+            
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+         
+          <!-- partial -->
         </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
     </div>
-<?php else: ?>
-    <p>No appointments found.</p>
-<?php endif; ?>
-
-        <?php
-$conn = mysqli_connect("localhost", "root", "", "eproject");
-
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-// Update appointment status and send email
-if (isset($_GET['action']) && isset($_GET['id'])) {
-  $status = $_GET['action'] == 'accept' ? 'Accepted' : 'Rejected';
-  $id = $_GET['id'];
-
-  $updateQuery = "UPDATE client SET status='$status' WHERE a_id='$id'";
-  if (mysqli_query($conn, $updateQuery)) {
-      // Fetch user email and appointment details to send notification
-      $query = "SELECT a_email, a_name, a_services, a_date, a_time FROM client WHERE a_id='$id'";
-      $result = mysqli_query($conn, $query);
-      $user = mysqli_fetch_assoc($result);
-
-      // Email details
-      $to = $user['a_email'];
-      $subject = "Appointment Status Update";
-      $message = "Hello " . $user['a_name'] . ",\n\n" .
-                 "Your appointment has been " . strtolower($status) . ".\n\n" .
-                 "Appointment Details:\n" .
-                 "Service: " . $user['a_services'] . "\n" .
-                 "Date: " . $user['a_date'] . "\n" .
-                 "Time: " . $user['a_time'] . "\n\n" .
-                 "Thanks For Applyツ!";
-      $headers = "From: btsr66274@gmail.com";
-
-      // Send email
-      mail($to, $subject, $message, $headers);
-  }
-}
-if (isset($_GET['delete_id'])) {
-  $deleteId = $_GET['delete_id'];
-  $deleteQuery = "DELETE FROM client WHERE a_id='$deleteId'";
-  mysqli_query($conn, $deleteQuery);
-}
-
-// Fetch all appointments
-$sql = "SELECT * FROM client";
-$result = mysqli_query($conn, $sql);
-// Clear all appointments
-if (isset($_GET['clear_all'])) {
-  $clearQuery = "DELETE FROM client";
-  if (mysqli_query($conn, $clearQuery)) {
-      echo "<script>alert('All appointments cleared successfully.');</script>";
-      // Redirect to refresh the page
-      header("Location: " . $_SERVER['PHP_SELF']);
-      exit;
-  } else {
-      echo "<script>alert('Error clearing appointments: " . mysqli_error($conn) . "');</script>";
-  }
-}
-
-?>
-    </div>
-
-    <!-- JS includes omitted for brevity -->
-</body>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="assets/vendors/chart.js/Chart.min.js"></script>
+    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
+    <script src="assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
+    <script src="assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="assets/vendors/owl-carousel-2/owl.carousel.min.js"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/misc.js"></script>
+    <script src="assets/js/settings.js"></script>
+    <script src="assets/js/todolist.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="assets/js/dashboard.js"></script>
+    <!-- End custom js for this page -->
+  </body>
 </html>

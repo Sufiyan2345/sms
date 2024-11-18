@@ -1,21 +1,33 @@
 <?php
+// Database connection
+$conn = mysqli_connect("localhost", "root", "", "eproject");
 
- $name  = $_POST['name'];
- $phone = $_POST['phone'];
- $email = $_POST['email'];
- $services = $_POST['service'];
- $date = $_POST['adate'];
- $time = $_POST['atime'];
- //creating connection
- $conn = mysqli_connect("localhost","root","","eproject") or die("Connection failed");
- //sql Command line
- $sql = "INSERT INTO client(a_name,a_phone,a_email,a_services,a_date,a_time) VALUES('{$name}','{$phone}','{$email}','{$services}','{$date}','{$time}')";
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
 
- $result = mysqli_query($conn, $sql) or die("Failed");
+// Check if the form is submitted
+if (isset($_POST['submit'])) {
+    // Get the form data
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $service = mysqli_real_escape_string($conn, $_POST['service']);
+    $adate = mysqli_real_escape_string($conn, $_POST['adate']);
+    $atime = mysqli_real_escape_string($conn, $_POST['atime']);
 
+    // Insert appointment into the database
+    $sql = "INSERT INTO appointments (name, phone, email, service, date, time) VALUES ('$name', '$phone', '$email', '$service', '$adate', '$atime')";
 
-header("Location: home.php");
+    if (mysqli_query($conn, $sql)) {
+        // Successful insertion, redirect to a thank you page or display a message
+        header("Location: home.php");
+        exit();
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
+}
 
+// Close the database connection
 mysqli_close($conn);
-
 ?>

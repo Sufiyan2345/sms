@@ -2,7 +2,7 @@
 <?php
 session_start();
 if(isset($_SESSION["user"])){
-    header("Location:  http://localhost/e-projectsms/home.php");
+    header("Location:  http://localhost/e-projectsms/admin-salon/index.php");
 }
 
 ?>
@@ -23,14 +23,36 @@ if(isset($_SESSION["user"])){
     </head>
 <style>
 body{
-    background-image:url(https://img.freepik.com/premium-photo/tools-barbershop-black-background-studio-shot_93675-164621.jpg) ;
+    background-image:url(https://png.pngtree.com/thumb_back/fh260/background/20230612/pngtree-some-pictures-of-an-antique-barber-shop-image_2906288.jpg) ;
     background-position: fixed;
     background-size: cover;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    padding: 290px;
+   
     
 }
+
 .container{
-   
+  
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
+
+.col-lg-6 {
+    background-color: rgba(0, 0, 0, 0.6); /* Slightly darken the background for contrast */
+    border-radius: 10px;
+}
+
+h2 {
+    color: white;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+
 </style>
     <body>
        
@@ -38,7 +60,7 @@ body{
         <div class="container">
 <div class="row">
 <div class="col-lg-6 mx-auto border shadow p-4"  style="color:white; font-family: monospace;">
-    <h2 class="text-center mb-4"style="color:white; font-family: monospace;"><b>Login Here</b></h2>
+    <h2 class="text-center mb-4"style="color:white; font-family: monospace;"><b>Login Admin Panel...</b></h2>
     <hr/>
      <?php
      if(isset($_POST["login"])){
@@ -53,7 +75,7 @@ body{
         if(password_verify($password, $user['password'])){
             session_start();
             $_SESSION["user"] = "yes";
-            header("Location:  http://localhost/e-projectsms/home.php");
+            header("Location:  http://localhost/e-projectsms/admin-salon/index.php");
             die();
         }
         else{
@@ -69,7 +91,7 @@ body{
      ?>
 
 
-<div class="conatiner">
+
         <form action="login.php" method="post">
  
     <div class="row mb-3">
@@ -97,7 +119,7 @@ body{
 
     </div>
     </form>
-    <div ><p style="color:white;">Not registered yet ? <a href="register.php">Register Here</a></p></div>
+   
 </div>
 </div>
 </div>
